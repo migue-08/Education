@@ -1,0 +1,444 @@
+---
+title: "Our_World_in_Data Graphics"
+subtitle: "Graphics"
+author: "Miguel Martinez"
+date: today
+format: 
+  html:
+    toc: true
+    theme: cosmo
+editor: visual
+execute:
+  warning: false
+---
+
+This document presents the process of creating the scatter plots and time series of Our World in Data information of education. You can download the data in the following link:
+
+[Our World in Data](https://ourworldindata.org/).
+
+The first step is to load the following libraries:
+
+```{r}
+
+library(ggrepel)
+library(tidyverse)
+```
+
+# **Share of GDP spent on education**
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df1 <- read.csv("https://ourworldindata.org/grapher/share-edu-spending-gdp-vs-share-edu-total-spending.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df1)
+```
+
+## Filtering
+
+```{r}
+
+df1 = df1 |> 
+  filter(Code %in% c("ARG", "BOL", "BRA", "CHL",
+                     "COL", "ECU", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year == 2020)
+
+as_tibble(df1)
+```
+
+## Graphic
+
+```{r}
+
+df1 |> 
+  ggplot(aes(x = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov,
+             y = expenditure_on_education_as_a_percentage_of_total_government_expenditure__pct__xgovexp_imf)) +
+  geom_point(colour = "darkblue") +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_text_repel(label = df1$Entity) +
+  theme_bw() +
+  labs(title = "Porcentaje del PIB gastado en educación vs. porcentaje del gasto
+asignado a educación, 2020",
+       subtitle = expression(atop("Gasto público general en educación (corriente, de capital y transferencias) expresado como",
+                                  "porcentaje del gasto público total en todos los sectores y como porcentaje del PIB")),
+       x = "Gasto en educación como (%) del PIB",
+       y = "Gasto en educación como (%) del gasto público", 
+       caption = "Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0))
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD1.pdf")
+
+```
+
+# **Government expenditure on primary education**
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df2 <- read.csv("https://ourworldindata.org/grapher/primary-edu-spending-vs-overall-edu-spending.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df2)
+```
+
+## Filtering
+
+```{r}
+
+df2 = df2 |> 
+  filter(Code %in% c("ARG", "BOL", "BRA", "CHL",
+                     "COL", "ECU", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year == 2020)
+
+as_tibble(df2)
+```
+
+## Graphic
+
+```{r}
+
+df2 |> 
+  ggplot(aes(x = government_expenditure_on_primary_education_as_a_percentage_of_gdp__pct,
+             y = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)) +
+  geom_point(colour = "darkblue") +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_text_repel(label = df2$Entity) +
+  theme_bw() +
+  labs(title = "Gasto público en toda la educación vs. educación primaria, 2020",
+       subtitle = "El gasto público se expresa como porcentaje del PIB",
+       x = "Gasto público en educación primaria (%)",
+       y = "Gasto público en toda la educación (%)", 
+       caption = "Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0))
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD2.pdf")
+```
+
+# Government expenditure on secondary education
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df3 <- read.csv("https://ourworldindata.org/grapher/government-expenditure-on-secondary-education-as-share-of-gdp.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df3)
+```
+
+## Filtering
+
+```{r}
+
+df3 = df3 |> 
+  filter(Code %in% c("ARG", "BOL", "BRA", "CHL",
+                     "COL", "ECU", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year >= 2000 & Year <= 2020)
+
+as_tibble(df3)
+```
+
+## Graphic
+
+Before doing the graph, we need to create a data frame to set unique labels in the final graph:
+
+```{r}
+
+countries = df3 |>
+  group_by(Entity) |> filter(Year == max(Year))
+```
+
+Now we create the graph:
+
+```{r}
+
+df3 |> 
+  ggplot(aes(x = Year,
+             y = government_expenditure_on_secondary_education_as_a_percentage_of_gdp__pct,
+             colour = Entity,
+             label = Entity)) +
+  geom_line() +
+  geom_point(size = 0.5) +
+  geom_text_repel(data = countries,
+                  nudge_x = 4,
+                  direction = "y",
+                  hjust = "right") +
+  expand_limits(x = max(df3$Year) + 2.5) +
+  guides(colour = FALSE) +
+  scale_x_continuous(breaks = seq(2000, 2020, by = 5)) +
+  scale_y_continuous(breaks = seq(0, 3, by = 0.5)) +
+  theme_bw() +
+  labs(title = "Gasto público en educación secundaria como (%) del PIB, 2000 a 2020",
+       subtitle = "(incluidos los gastos locales, regionales, centrales, corrientes, de capital y transferencias)",
+       y = "Porcentaje (%)", 
+       caption = "Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        axis.title.x = element_blank())
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD4.pdf")
+```
+
+# Government expenditure on education - regions
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df4 <- read.csv("https://ourworldindata.org/grapher/total-government-expenditure-on-education-gdp.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df4)
+```
+
+## Filtering
+
+```{r}
+
+df4 = df4 |> 
+  filter(Entity %in% c("Europe and Central Asia (WB)",
+                       "Latin America and Caribbean (WB)",
+                       "North America (WB)")) |> 
+  filter(Year >= 2000 & Year <= 2022)
+
+as_tibble(df4)
+```
+
+## Graphic
+
+Now we create the graph:
+
+```{r}
+
+four = 4.0  # Baseline
+
+df4 |> 
+  ggplot(aes(x = Year,
+             y = combined_expenditure,
+             colour = Entity)) +
+  geom_line() +
+  geom_point(size = 0.5) +
+  geom_hline(yintercept = four, color = "black", linetype = 2) +
+  scale_x_continuous(breaks = seq(2000, 2022, by = 5)) +
+  theme_bw() +
+  labs(title = "Gasto público en educación como (%) del PIB, 2000 a 2022",
+       subtitle = "(todos los niveles de gobierno y todos los niveles de educación)",
+       y = "Porcentaje (%)", 
+       caption = "Fuente: Elaboración propia con datos de World Bank (2024); Tanzi & Schuknecht (2000), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        legend.position = "bottom",
+        axis.title.x = element_blank())
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD1.pdf")
+```
+
+# **Average performance of 15-year-old girls and boys in mathematics, 2022**
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df5 <- read.csv("https://ourworldindata.org/grapher/pisa-mean-performance-on-the-mathematics-scale-by-sex.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df5)
+```
+
+## Filtering
+
+Because the lack of information we exclude Bolivia and Ecuador
+
+```{r}
+
+df5 = df5 |> 
+  filter(Code %in% c("ARG", "BRA", "CHL",
+                     "COL", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year == 2022)
+
+as_tibble(df5)
+
+```
+
+## Graphic
+
+```{r}
+
+df5 |> 
+  ggplot(aes(x = pisa_math_average_boys,
+             y = pisa_math_average_girls,
+             colour = Entity,
+             size = population_historical)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(linetype = 2) +
+  geom_text_repel(label = df5$Entity) +
+  theme_bw() +
+  labs(x = "Niños (puntuación)",
+       y = "Niñas (puntuación)") +
+  labs(title = "Rendimiento promedio de niñas y niños de 15 años en matemáticas, 2022",
+       subtitle = "Evaluado a través de la escala de matemáticas PISA",
+       x = "Niños (puntuación)",
+       y = "Niñas (puntuación)", 
+       caption = "Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        legend.position = "none")
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD5.pdf")
+```
+
+# **Average performance of 15-year-old girls and boys in sciences, 2022**
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+
+df6 <- read.csv("https://ourworldindata.org/grapher/average-performance-of-15-year-old-girls-and-boys-on-the-science-scale.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df6)
+```
+
+## Filtering
+
+Because the lack of information we exclude Bolivia and Ecuador:
+
+```{r}
+
+df6 = df6 |> 
+  filter(Code %in% c("ARG", "BRA", "CHL",
+                     "COL", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year == 2022)
+
+as_tibble(df6)
+
+```
+
+## Graphic
+
+```{r}
+
+df6 |> 
+  ggplot(aes(x = pisa_science_average_boys,
+             y = pisa_science_average_girls,
+             colour = Entity,
+             size = population)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(linetype = 2) +
+  geom_text_repel(label = df6$Entity) +
+  theme_bw() +
+  labs(title = "Rendimiento promedio de niñas y niños de 15 años en ciencias, 2022",
+       subtitle = "Evaluado a través de la escala de ciencias PISA",
+       x = "Niños (puntuación)",
+       y = "Niñas (puntuación)", 
+       caption = "Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        legend.position = "none")
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD6.pdf")
+```
+
+# **Average performance of 15-year-old girls and boys in reading, 2022**
+
+## Load data
+
+We fetch the data directly from the webpage:
+
+```{r}
+
+# Fetch the data
+df7 <- read.csv("https://ourworldindata.org/grapher/pisa-mean-performance-on-the-reading-scale-by-sex.csv?v=1&csvType=full&useColumnShortNames=true")
+
+glimpse(df7)
+
+```
+
+## Filtering
+
+Because the lack of information we exclude Bolivia and Ecuador:
+
+```{r}
+
+df7 = df7 |> 
+  filter(Code %in% c("ARG", "BRA", "CHL",
+                     "COL", "PRY", "PER",
+                     "URY", "USA", "MEX")) |> 
+  filter(Year == 2022)
+
+as_tibble(df7)
+```
+
+## Graphic
+
+```{r}
+
+df7 |> 
+  ggplot(aes(x = pisa_reading_average_boys,
+             y = pisa_reading_average_girls,
+             colour = Entity,
+             size = population_historical)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(linetype = 2) +
+  geom_text_repel(label = df7$Entity) +
+  theme_bw() +
+  labs(title = "Rendimiento promedio de niñas y niños de 15 años en lectura, 2022",
+       subtitle = "Evaluado a través de la escala de lectura PISA",
+       x = "Niños (puntuación)",
+       y = "Niñas (puntuación)", 
+       caption = "Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.") +
+  theme(plot.caption.position = "panel",
+        plot.caption = element_text(hjust = 0),
+        legend.position = "none")
+
+
+# Saving the plot 
+
+# ggsave(filename = "OWD7.pdf")
+```
