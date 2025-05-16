@@ -2,154 +2,154 @@
   {
     "objectID": "our_world_in_data.html",
     "href": "our_world_in_data.html",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "",
-    "text": "This document presents the process of creating the scatter plots and time series of Our World in Data information of education. You can download the data in the following link:\nOur World in Data.\nThe first step is to load the following libraries:\nlibrary(ggrepel)\nlibrary(tidyverse)"
+    "text": "This document presents the process of creating scatter plots and time series of Our World in Data information about education. You can download the data at the following link:\nOur World in Data.\nThe first step is to load the following libraries:\nlibrary(ggrepel)\nlibrary(tidyverse)"
   },
   {
     "objectID": "our_world_in_data.html#load-data",
     "href": "our_world_in_data.html#load-data",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf1 &lt;- read.csv(\"https://ourworldindata.org/grapher/share-edu-spending-gdp-vs-share-edu-total-spending.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df1)\n\nRows: 5,817\nColumns: 6\n$ Entity                                                                                     &lt;chr&gt; …\n$ Code                                                                                       &lt;chr&gt; …\n$ Year                                                                                       &lt;int&gt; …\n$ expenditure_on_education_as_a_percentage_of_total_government_expenditure__pct__xgovexp_imf &lt;dbl&gt; …\n$ government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov                &lt;dbl&gt; …\n$ owid_region                                                                                &lt;chr&gt; …"
   },
   {
     "objectID": "our_world_in_data.html#filtering",
     "href": "our_world_in_data.html#filtering",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\n\ndf1 = df1 |&gt; \n  filter(Code %in% c(\"ARG\", \"BOL\", \"BRA\", \"CHL\",\n                     \"COL\", \"ECU\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year == 2020)\n\nas_tibble(df1)\n\n# A tibble: 11 × 6\n   Entity  Code   Year expenditure_on_educa…¹ government_expenditu…² owid_region\n   &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;                  &lt;dbl&gt;                  &lt;dbl&gt; &lt;chr&gt;      \n 1 Argent… ARG    2020                   12.4                   5.28 \"\"         \n 2 Bolivia BOL    2020                   22.2                   8.44 \"\"         \n 3 Brazil  BRA    2020                   11.6                   5.77 \"\"         \n 4 Chile   CHL    2020                   19.4                   5.63 \"\"         \n 5 Colomb… COL    2020                   NA                     5.26 \"\"         \n 6 Ecuador ECU    2020                   10.6                   4.26 \"\"         \n 7 Mexico  MEX    2020                   16.2                   4.50 \"\"         \n 8 Paragu… PRY    2020                   24.5                   3.94 \"\"         \n 9 Peru    PER    2020                   15.5                   4.26 \"\"         \n10 United… USA    2020                   12.7                   5.40 \"\"         \n11 Uruguay URY    2020                   13.9                   4.54 \"\"         \n# ℹ abbreviated names:\n#   ¹​expenditure_on_education_as_a_percentage_of_total_government_expenditure__pct__xgovexp_imf,\n#   ²​government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov"
   },
   {
     "objectID": "our_world_in_data.html#graphic",
     "href": "our_world_in_data.html#graphic",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\n\ndf1 |&gt; \n  ggplot(aes(x = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov,\n             y = expenditure_on_education_as_a_percentage_of_total_government_expenditure__pct__xgovexp_imf)) +\n  geom_point(colour = \"darkblue\") +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  geom_text_repel(label = df1$Entity) +\n  theme_bw() +\n  labs(title = \"Porcentaje del PIB gastado en educación vs. porcentaje del gasto\nasignado a educación, 2020\",\n       subtitle = expression(atop(\"Gasto público general en educación (corriente, de capital y transferencias) expresado como\",\n                                  \"porcentaje del gasto público total en todos los sectores y como porcentaje del PIB\")),\n       x = \"Gasto en educación como (%) del PIB\",\n       y = \"Gasto en educación como (%) del gasto público\", \n       caption = \"Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0))\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD1.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-1",
     "href": "our_world_in_data.html#load-data-1",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf2 &lt;- read.csv(\"https://ourworldindata.org/grapher/primary-edu-spending-vs-overall-edu-spending.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df2)\n\nRows: 5,610\nColumns: 6\n$ Entity                                                                      &lt;chr&gt; …\n$ Code                                                                        &lt;chr&gt; …\n$ Year                                                                        &lt;int&gt; …\n$ government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov &lt;dbl&gt; …\n$ government_expenditure_on_primary_education_as_a_percentage_of_gdp__pct     &lt;dbl&gt; …\n$ owid_region                                                                 &lt;chr&gt; …"
   },
   {
     "objectID": "our_world_in_data.html#filtering-1",
     "href": "our_world_in_data.html#filtering-1",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\n\ndf2 = df2 |&gt; \n  filter(Code %in% c(\"ARG\", \"BOL\", \"BRA\", \"CHL\",\n                     \"COL\", \"ECU\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year == 2020)\n\nas_tibble(df2)\n\n# A tibble: 11 × 6\n   Entity  Code   Year government_expenditu…¹ government_expenditu…² owid_region\n   &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;                  &lt;dbl&gt;                  &lt;dbl&gt; &lt;chr&gt;      \n 1 Argent… ARG    2020                   5.28                   1.60 \"\"         \n 2 Bolivia BOL    2020                   8.44                   3.55 \"\"         \n 3 Brazil  BRA    2020                   5.77                   1.38 \"\"         \n 4 Chile   CHL    2020                   5.63                   1.56 \"\"         \n 5 Colomb… COL    2020                   5.26                  NA    \"\"         \n 6 Ecuador ECU    2020                   4.26                   1.24 \"\"         \n 7 Mexico  MEX    2020                   4.50                   1.49 \"\"         \n 8 Paragu… PRY    2020                   3.94                   1.45 \"\"         \n 9 Peru    PER    2020                   4.26                   1.42 \"\"         \n10 United… USA    2020                   5.40                   1.52 \"\"         \n11 Uruguay URY    2020                   4.54                   1.11 \"\"         \n# ℹ abbreviated names:\n#   ¹​government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov,\n#   ²​government_expenditure_on_primary_education_as_a_percentage_of_gdp__pct"
   },
   {
     "objectID": "our_world_in_data.html#graphic-1",
     "href": "our_world_in_data.html#graphic-1",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\n\ndf2 |&gt; \n  ggplot(aes(x = government_expenditure_on_primary_education_as_a_percentage_of_gdp__pct,\n             y = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)) +\n  geom_point(colour = \"darkblue\") +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  geom_text_repel(label = df2$Entity) +\n  theme_bw() +\n  labs(title = \"Gasto público en toda la educación vs. educación primaria, 2020\",\n       subtitle = \"El gasto público se expresa como porcentaje del PIB\",\n       x = \"Gasto público en educación primaria (%)\",\n       y = \"Gasto público en toda la educación (%)\", \n       caption = \"Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0))\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD2.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-2",
     "href": "our_world_in_data.html#load-data-2",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf3 &lt;- read.csv(\"https://ourworldindata.org/grapher/government-expenditure-on-secondary-education-as-share-of-gdp.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df3)\n\nRows: 3,691\nColumns: 4\n$ Entity                                                                    &lt;chr&gt; …\n$ Code                                                                      &lt;chr&gt; …\n$ Year                                                                      &lt;int&gt; …\n$ government_expenditure_on_secondary_education_as_a_percentage_of_gdp__pct &lt;dbl&gt; …"
   },
   {
     "objectID": "our_world_in_data.html#filtering-2",
     "href": "our_world_in_data.html#filtering-2",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\n\ndf3 = df3 |&gt; \n  filter(Code %in% c(\"ARG\", \"BOL\", \"BRA\", \"CHL\",\n                     \"COL\", \"ECU\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year &gt;= 2000 & Year &lt;= 2020)\n\nas_tibble(df3)\n\n# A tibble: 162 × 4\n   Entity    Code   Year government_expenditure_on_secondary_education_as_a_pe…¹\n   &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;                                                   &lt;dbl&gt;\n 1 Argentina ARG    2000                                                    1.64\n 2 Argentina ARG    2001                                                    1.77\n 3 Argentina ARG    2002                                                    1.58\n 4 Argentina ARG    2003                                                    1.32\n 5 Argentina ARG    2004                                                    1.32\n 6 Argentina ARG    2005                                                    1.61\n 7 Argentina ARG    2006                                                    1.65\n 8 Argentina ARG    2007                                                    1.75\n 9 Argentina ARG    2008                                                    1.90\n10 Argentina ARG    2009                                                    2.26\n# ℹ 152 more rows\n# ℹ abbreviated name:\n#   ¹​government_expenditure_on_secondary_education_as_a_percentage_of_gdp__pct"
   },
   {
     "objectID": "our_world_in_data.html#graphic-2",
     "href": "our_world_in_data.html#graphic-2",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\nBefore doing the graph, we need to create a data frame to set unique labels in the final graph:\n\ncountries = df3 |&gt;\n  group_by(Entity) |&gt; filter(Year == max(Year))\n\nNow we create the graph:\n\ndf3 |&gt; \n  ggplot(aes(x = Year,\n             y = government_expenditure_on_secondary_education_as_a_percentage_of_gdp__pct,\n             colour = Entity,\n             label = Entity)) +\n  geom_line() +\n  geom_point(size = 0.5) +\n  geom_text_repel(data = countries,\n                  nudge_x = 4,\n                  direction = \"y\",\n                  hjust = \"right\") +\n  expand_limits(x = max(df3$Year) + 2.5) +\n  guides(colour = FALSE) +\n  scale_x_continuous(breaks = seq(2000, 2020, by = 5)) +\n  scale_y_continuous(breaks = seq(0, 3, by = 0.5)) +\n  theme_bw() +\n  labs(title = \"Gasto público en educación secundaria como (%) del PIB, 2000 a 2020\",\n       subtitle = \"(incluidos los gastos locales, regionales, centrales, corrientes, de capital y transferencias)\",\n       y = \"Porcentaje (%)\", \n       caption = \"Fuente: Elaboración propia con datos de UNESCO Institute for Statistics (2024), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        axis.title.x = element_blank())\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD4.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-3",
     "href": "our_world_in_data.html#load-data-3",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf4 &lt;- read.csv(\"https://ourworldindata.org/grapher/total-government-expenditure-on-education-gdp.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df4)\n\nRows: 5,676\nColumns: 4\n$ Entity               &lt;chr&gt; \"Afghanistan\", \"Afghanistan\", \"Afghanistan\", \"Afg…\n$ Code                 &lt;chr&gt; \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", …\n$ Year                 &lt;int&gt; 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2…\n$ combined_expenditure &lt;dbl&gt; 4.684761, 4.174895, 4.383672, 4.810640, 3.479450,…"
   },
   {
     "objectID": "our_world_in_data.html#filtering-3",
     "href": "our_world_in_data.html#filtering-3",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\n\ndf4 = df4 |&gt; \n  filter(Entity %in% c(\"Europe and Central Asia (WB)\",\n                       \"Latin America and Caribbean (WB)\",\n                       \"North America (WB)\")) |&gt; \n  filter(Year &gt;= 2000 & Year &lt;= 2022)\n\nas_tibble(df4)\n\n# A tibble: 68 × 4\n   Entity                       Code   Year combined_expenditure\n   &lt;chr&gt;                        &lt;chr&gt; &lt;int&gt;                &lt;dbl&gt;\n 1 Europe and Central Asia (WB) \"\"     2000                 4.39\n 2 Europe and Central Asia (WB) \"\"     2001                 4.65\n 3 Europe and Central Asia (WB) \"\"     2002                 4.53\n 4 Europe and Central Asia (WB) \"\"     2003                 5.04\n 5 Europe and Central Asia (WB) \"\"     2004                 4.83\n 6 Europe and Central Asia (WB) \"\"     2005                 4.93\n 7 Europe and Central Asia (WB) \"\"     2006                 4.91\n 8 Europe and Central Asia (WB) \"\"     2007                 4.63\n 9 Europe and Central Asia (WB) \"\"     2008                 4.84\n10 Europe and Central Asia (WB) \"\"     2009                 4.97\n# ℹ 58 more rows"
   },
   {
     "objectID": "our_world_in_data.html#graphic-3",
     "href": "our_world_in_data.html#graphic-3",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\nNow we create the graph:\n\nfour = 4.0  # Baseline\n\ndf4 |&gt; \n  ggplot(aes(x = Year,\n             y = combined_expenditure,\n             colour = Entity)) +\n  geom_line() +\n  geom_point(size = 0.5) +\n  geom_hline(yintercept = four, color = \"black\", linetype = 2) +\n  scale_x_continuous(breaks = seq(2000, 2022, by = 5)) +\n  theme_bw() +\n  labs(title = \"Gasto público en educación como (%) del PIB, 2000 a 2022\",\n       subtitle = \"(todos los niveles de gobierno y todos los niveles de educación)\",\n       y = \"Porcentaje (%)\", \n       caption = \"Fuente: Elaboración propia con datos de World Bank (2024); Tanzi & Schuknecht (2000), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        legend.position = \"bottom\",\n        axis.title.x = element_blank())\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD1.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-4",
     "href": "our_world_in_data.html#load-data-4",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf5 &lt;- read.csv(\"https://ourworldindata.org/grapher/pisa-mean-performance-on-the-mathematics-scale-by-sex.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df5)\n\nRows: 59,225\nColumns: 7\n$ Entity                  &lt;chr&gt; \"Afghanistan\", \"Afghanistan\", \"Afghanistan\", \"…\n$ Code                    &lt;chr&gt; \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG…\n$ Year                    &lt;int&gt; -10000, -9000, -8000, -7000, -6000, -5000, -40…\n$ pisa_math_average_girls &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ pisa_math_average_boys  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ population_historical   &lt;dbl&gt; 14737, 20405, 28253, 39120, 54166, 75000, 3062…\n$ owid_region             &lt;chr&gt; \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"…"
   },
   {
     "objectID": "our_world_in_data.html#filtering-4",
     "href": "our_world_in_data.html#filtering-4",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\nBecause the lack of information we exclude Bolivia and Ecuador\n\ndf5 = df5 |&gt; \n  filter(Code %in% c(\"ARG\", \"BRA\", \"CHL\",\n                     \"COL\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year == 2022)\n\nas_tibble(df5)\n\n# A tibble: 9 × 7\n  Entity        Code   Year pisa_math_average_girls pisa_math_average_boys\n  &lt;chr&gt;         &lt;chr&gt; &lt;int&gt;                   &lt;dbl&gt;                  &lt;dbl&gt;\n1 Argentina     ARG    2022                    372.                   383.\n2 Brazil        BRA    2022                    375.                   383.\n3 Chile         CHL    2022                    403.                   420.\n4 Colombia      COL    2022                    378.                   387.\n5 Mexico        MEX    2022                    389.                   401.\n6 Paraguay      PRY    2022                    332.                   343.\n7 Peru          PER    2022                    384.                   399.\n8 United States USA    2022                    458.                   471.\n9 Uruguay       URY    2022                    403.                   414.\n# ℹ 2 more variables: population_historical &lt;dbl&gt;, owid_region &lt;chr&gt;"
   },
   {
     "objectID": "our_world_in_data.html#graphic-4",
     "href": "our_world_in_data.html#graphic-4",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\n\ndf5 |&gt; \n  ggplot(aes(x = pisa_math_average_boys,\n             y = pisa_math_average_girls,\n             colour = Entity,\n             size = population_historical)) +\n  geom_point(alpha = 0.5) +\n  geom_abline(linetype = 2) +\n  geom_text_repel(label = df5$Entity) +\n  theme_bw() +\n  labs(x = \"Niños (puntuación)\",\n       y = \"Niñas (puntuación)\") +\n  labs(title = \"Rendimiento promedio de niñas y niños de 15 años en matemáticas, 2022\",\n       subtitle = \"Evaluado a través de la escala de matemáticas PISA\",\n       x = \"Niños (puntuación)\",\n       y = \"Niñas (puntuación)\", \n       caption = \"Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        legend.position = \"none\")\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD5.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-5",
     "href": "our_world_in_data.html#load-data-5",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\n\ndf6 &lt;- read.csv(\"https://ourworldindata.org/grapher/average-performance-of-15-year-old-girls-and-boys-on-the-science-scale.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df6)\n\nRows: 78,935\nColumns: 7\n$ Entity                     &lt;chr&gt; \"Afghanistan\", \"Afghanistan\", \"Afghanistan\"…\n$ Code                       &lt;chr&gt; \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"…\n$ Year                       &lt;int&gt; -10000, -9000, -8000, -7000, -6000, -5000, …\n$ pisa_science_average_girls &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ pisa_science_average_boys  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ population                 &lt;dbl&gt; 14737, 20405, 28253, 39120, 54166, 75000, 3…\n$ owid_region                &lt;chr&gt; \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\",…"
   },
   {
     "objectID": "our_world_in_data.html#filtering-5",
     "href": "our_world_in_data.html#filtering-5",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\nBecause the lack of information we exclude Bolivia and Ecuador:\n\ndf6 = df6 |&gt; \n  filter(Code %in% c(\"ARG\", \"BRA\", \"CHL\",\n                     \"COL\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year == 2022)\n\nas_tibble(df6)\n\n# A tibble: 9 × 7\n  Entity    Code   Year pisa_science_average…¹ pisa_science_average…² population\n  &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;                  &lt;dbl&gt;                  &lt;dbl&gt;      &lt;dbl&gt;\n1 Argentina ARG    2022                   403.                   409.   45407866\n2 Brazil    BRA    2022                   400.                   406.  210306358\n3 Chile     CHL    2022                   436.                   450.   19552984\n4 Colombia  COL    2022                   408.                   414.   51737891\n5 Mexico    MEX    2022                   404.                   417.  128613066\n6 Paraguay  PRY    2022                   367.                   370.    6760399\n7 Peru      PER    2022                   401.                   415.   33475381\n8 United S… USA    2022                   496.                   503.  341533996\n9 Uruguay   URY    2022                   431.                   440.    3390863\n# ℹ abbreviated names: ¹​pisa_science_average_girls, ²​pisa_science_average_boys\n# ℹ 1 more variable: owid_region &lt;chr&gt;"
   },
   {
     "objectID": "our_world_in_data.html#graphic-5",
     "href": "our_world_in_data.html#graphic-5",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\n\ndf6 |&gt; \n  ggplot(aes(x = pisa_science_average_boys,\n             y = pisa_science_average_girls,\n             colour = Entity,\n             size = population)) +\n  geom_point(alpha = 0.5) +\n  geom_abline(linetype = 2) +\n  geom_text_repel(label = df6$Entity) +\n  theme_bw() +\n  labs(title = \"Rendimiento promedio de niñas y niños de 15 años en ciencias, 2022\",\n       subtitle = \"Evaluado a través de la escala de ciencias PISA\",\n       x = \"Niños (puntuación)\",\n       y = \"Niñas (puntuación)\", \n       caption = \"Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        legend.position = \"none\")\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD6.pdf\")"
   },
   {
     "objectID": "our_world_in_data.html#load-data-6",
     "href": "our_world_in_data.html#load-data-6",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Load data",
     "text": "Load data\nWe fetch the data directly from the webpage:\n\n# Fetch the data\ndf7 &lt;- read.csv(\"https://ourworldindata.org/grapher/pisa-mean-performance-on-the-reading-scale-by-sex.csv?v=1&csvType=full&useColumnShortNames=true\")\n\nglimpse(df7)\n\nRows: 59,227\nColumns: 7\n$ Entity                     &lt;chr&gt; \"Afghanistan\", \"Afghanistan\", \"Afghanistan\"…\n$ Code                       &lt;chr&gt; \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"AFG\", \"…\n$ Year                       &lt;int&gt; -10000, -9000, -8000, -7000, -6000, -5000, …\n$ pisa_reading_average_girls &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ pisa_reading_average_boys  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ population_historical      &lt;dbl&gt; 14737, 20405, 28253, 39120, 54166, 75000, 3…\n$ owid_region                &lt;chr&gt; \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\",…"
   },
   {
     "objectID": "our_world_in_data.html#filtering-6",
     "href": "our_world_in_data.html#filtering-6",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Filtering",
     "text": "Filtering\nBecause the lack of information we exclude Bolivia and Ecuador:\n\ndf7 = df7 |&gt; \n  filter(Code %in% c(\"ARG\", \"BRA\", \"CHL\",\n                     \"COL\", \"PRY\", \"PER\",\n                     \"URY\", \"USA\", \"MEX\")) |&gt; \n  filter(Year == 2022)\n\nas_tibble(df7)\n\n# A tibble: 9 × 7\n  Entity        Code   Year pisa_reading_average_girls pisa_reading_average_boys\n  &lt;chr&gt;         &lt;chr&gt; &lt;int&gt;                      &lt;dbl&gt;                     &lt;dbl&gt;\n1 Argentina     ARG    2022                       408.                      394.\n2 Brazil        BRA    2022                       419.                      402.\n3 Chile         CHL    2022                       451.                      445.\n4 Colombia      COL    2022                       414.                      403.\n5 Mexico        MEX    2022                       419.                      411.\n6 Paraguay      PRY    2022                       382.                      364.\n7 Peru          PER    2022                       412.                      404.\n8 United States USA    2022                       515.                      493.\n9 Uruguay       URY    2022                       438.                      423.\n# ℹ 2 more variables: population_historical &lt;dbl&gt;, owid_region &lt;chr&gt;"
   },
   {
     "objectID": "our_world_in_data.html#graphic-6",
     "href": "our_world_in_data.html#graphic-6",
-    "title": "Our_World_in_Data Graphics",
+    "title": "Our World in Data",
     "section": "Graphic",
     "text": "Graphic\n\ndf7 |&gt; \n  ggplot(aes(x = pisa_reading_average_boys,\n             y = pisa_reading_average_girls,\n             colour = Entity,\n             size = population_historical)) +\n  geom_point(alpha = 0.5) +\n  geom_abline(linetype = 2) +\n  geom_text_repel(label = df7$Entity) +\n  theme_bw() +\n  labs(title = \"Rendimiento promedio de niñas y niños de 15 años en lectura, 2022\",\n       subtitle = \"Evaluado a través de la escala de lectura PISA\",\n       x = \"Niños (puntuación)\",\n       y = \"Niñas (puntuación)\", \n       caption = \"Fuente: Elaboración propia con datos de OECD (2023), Our World in Data.\") +\n  theme(plot.caption.position = \"panel\",\n        plot.caption = element_text(hjust = 0),\n        legend.position = \"none\")\n\n\n\n\n\n\n\n# Saving the plot \n\n# ggsave(filename = \"OWD7.pdf\")"
   }
